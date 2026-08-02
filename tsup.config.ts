@@ -7,6 +7,7 @@ export default defineConfig({
     platform: "node",
     outDir: "dist",
     bundle: true,
+    minify: true,
     banner: {
         js:` 
         import {createRequire} from 'module';
