@@ -1,0 +1,18 @@
+enum Role{
+    PROVIDER
+    CUSTOMER
+    ADMIN
+}
+
+
+model User {
+    id String @id @default(uuid())
+    name String
+    email String @unique
+    password String
+    role Role @default(PROVIDER)
+
+    gears Gears[]
+
+    bookings Booking[]
+}
