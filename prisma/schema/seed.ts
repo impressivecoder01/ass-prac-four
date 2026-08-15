@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs"
 import prisma from "../../src/lib/prisma";
 import { email } from "zod";
 import { BookingStatus, PaymentStatus, Role } from "../generated/prisma/enums";
+import { randomUUID } from "crypto";
 
 async function main() {
     const password = await bcrypt.hash('password123', 10);
@@ -247,6 +248,33 @@ const bookingsToCreate = [
         paymentStatus: PaymentStatus.CONFIRMED,
     },
 ];
+
+for (const b of bookingsToCreate){
+    if(b.gear){
+        const totalPrice = 10*b.gear.dailyRate 
+        const booking = await prisma.booking.create({
+            data: {
+                gearId: b.gear.id,
+                renterId: b.renterId,
+                startDate: b.startDate,
+                endDate: b.endDate,
+                totalPrice,
+                status: b.bookingStatus
+            }
+        })
+
+        if(b.paymentStatus !== 'PENDING'){
+            await prisma.payment.create({
+            data: {
+                bookingId: booking.id,
+                amount: totalPrice,
+                status: b.paymentStatus,
+                transactionId: randomUUID()
+            }
+        })
+        }
+    }
+}
 }
 
 main().then(process.exit(0))
