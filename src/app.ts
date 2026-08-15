@@ -2,6 +2,7 @@ import express, { type Application } from "express"
 import prisma from "./lib/prisma"
 import { json } from "node:stream/consumers"
 import { notFound } from "./middleware/notFound"
+import { globalErrorHandle } from "./middleware/globalError"
 
 const app:Application = express()
 
@@ -11,6 +12,7 @@ app.get("/", async(req, res)=> {
     res.send("server is done")
 })
 
+app.use(globalErrorHandle)
 app.use(notFound)
 
 export default app
